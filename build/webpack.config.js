@@ -23,7 +23,7 @@ function config(options) {
     return {
         mode,
         entry: {
-            app: ['babel-helpers', 'app', 'main.scss']
+            app: ['app', 'main.scss']
         },
         output: {
             path: path.resolve('.', 'tmp'),
@@ -47,7 +47,6 @@ function config(options) {
                 path.join(rootDir, 'node_modules')
             ],
             alias: {
-                'babel-helpers': path.join(rootDir, 'app/lib/babel-helpers.js'),
                 jquery: `jquery/dist/jquery${devMode ? '' : '.min'}.js`,
                 morphdom: `morphdom/dist/morphdom-umd${devMode ? '' : '.min'}.js`,
                 kdbxweb: `kdbxweb/dist/kdbxweb${devMode ? '' : '.min'}.js`,
@@ -151,15 +150,10 @@ function config(options) {
                         }
                     ]
                 },
-                {
-                    test: /babel-helpers\.js$/,
-                    loader: 'exports-loader',
-                    options: { type: 'module', exports: 'default babelHelpers' }
-                },
                 { test: /handlebars/, loader: 'strip-sourcemap-loader' },
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules|babel-helpers\.js)/,
+                    exclude: /node_modules/,
                     loader: 'babel-loader',
                     options: { cacheDirectory: true }
                 },
@@ -216,8 +210,7 @@ function config(options) {
                     pkg.license
             ),
             new webpack.ProvidePlugin({
-                $: 'jquery',
-                babelHelpers: 'babel-helpers'
+                $: 'jquery'
             }),
             new webpack.IgnorePlugin({ resourceRegExp: /^moment$/ }),
             new MiniCssExtractPlugin({
