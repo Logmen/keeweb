@@ -9,7 +9,7 @@ const webpackConfig = require('./build/webpack.config');
 const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
 
-debug.enable('electron-notarize');
+debug.enable('@electron/notarize');
 
 module.exports = function (grunt) {
     require('time-grunt')(grunt);
@@ -639,18 +639,18 @@ module.exports = function (grunt) {
                 },
                 hardenedRuntime: true,
                 entitlements: 'package/osx/entitlements.plist',
-                'entitlements-inherit': 'package/osx/entitlements-inherit.plist',
-                'gatekeeper-assess': false
+                entitlementsInherit: 'package/osx/entitlements-inherit.plist',
+                gatekeeperAssess: false
             },
             'desktop-x64': {
                 options: {
-                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                    provisioningProfile: './keys/keeweb.provisionprofile'
                 },
                 src: 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app'
             },
             'desktop-arm64': {
                 options: {
-                    'provisioning-profile': './keys/keeweb.provisionprofile'
+                    provisioningProfile: './keys/keeweb.provisionprofile'
                 },
                 src: 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app'
             },
@@ -660,12 +660,12 @@ module.exports = function (grunt) {
         },
         notarize: {
             options: {
-                appBundleId: 'net.antelle.keeweb',
+                tool: 'notarytool',
                 get appleId() {
                     return getCodeSignConfig().appleId;
                 },
                 appleIdPassword: '@keychain:AC_PASSWORD',
-                get ascProvider() {
+                get teamId() {
                     return getCodeSignConfig().teamId;
                 }
             },

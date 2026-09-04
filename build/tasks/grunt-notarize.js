@@ -1,9 +1,9 @@
-const { notarize } = require('electron-notarize');
+const { notarize } = require('@electron/notarize');
 
 module.exports = function (grunt) {
     grunt.registerMultiTask(
         'notarize',
-        'Notarizes a macOS electron app using electron-notarize',
+        'Notarizes a macOS electron app using @electron/notarize',
         async function () {
             const done = this.async();
             const opt = this.options();
@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                             grunt.log.writeln('notarized:', appPath);
                         })
                         .catch((err) => {
-                            grunt.warn('electron-notarize returned an error: \n' + err);
+                            grunt.warn('@electron/notarize returned an error: \n' + err);
                         })
                 )
             ).then(done);
