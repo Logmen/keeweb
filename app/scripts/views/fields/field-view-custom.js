@@ -49,7 +49,7 @@ class FieldViewCustom extends FieldViewText {
             if (this.isProtected) {
                 newVal = kdbxweb.ProtectedValue.fromString(newVal);
             } else {
-                newVal = $.trim(newVal);
+                newVal = newVal.trim();
             }
         }
         FieldView.prototype.endEdit.call(this, newVal, extra);

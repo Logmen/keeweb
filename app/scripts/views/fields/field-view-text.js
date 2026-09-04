@@ -237,7 +237,7 @@ class FieldViewText extends FieldView {
             newVal = kdbxweb.ProtectedValue.fromString(newVal);
         }
         if (typeof newVal === 'string') {
-            newVal = $.trim(newVal);
+            newVal = newVal.trim();
         }
         super.endEdit(newVal, extra);
     }

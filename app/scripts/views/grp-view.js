@@ -54,7 +54,7 @@ class GrpView extends View {
     }
 
     changeTitle(e) {
-        const title = $.trim(e.target.value);
+        const title = e.target.value.trim();
         if (title) {
             if (!this.model.top && title !== this.model.title) {
                 this.model.setName(title);
@@ -69,7 +69,7 @@ class GrpView extends View {
 
     changeAutoTypeSeq(e) {
         const el = e.target;
-        const seq = $.trim(el.value);
+        const seq = el.value.trim();
         AutoType.validate(null, seq, (err) => {
             $(e.target).toggleClass('input--error', !!err);
             if (!err) {

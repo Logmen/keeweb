@@ -524,7 +524,7 @@ class SettingsFileView extends View {
     }
 
     changeName(e) {
-        const value = $.trim(e.target.value);
+        const value = e.target.value.trim();
         if (!value) {
             return;
         }
@@ -532,7 +532,7 @@ class SettingsFileView extends View {
     }
 
     changeDefUser(e) {
-        const value = $.trim(e.target.value);
+        const value = e.target.value.trim();
         this.model.setDefaultUser(value);
     }
 

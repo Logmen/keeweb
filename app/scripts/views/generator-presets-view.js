@@ -126,7 +126,7 @@ class GeneratorPresetsView extends View {
     }
 
     changeTitle(e) {
-        const title = $.trim(e.target.value);
+        const title = e.target.value.trim();
         if (title && title !== this.getPreset(this.selected).title) {
             let duplicate = this.presets.some((p) => p.title.toLowerCase() === title.toLowerCase());
             if (!duplicate) {

@@ -764,10 +764,10 @@ class DetailsView extends View {
         e.stopPropagation();
         const code = e.keyCode || e.which;
         if (code === Keys.DOM_VK_RETURN) {
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             this.setTitle(e.target.value);
         } else if (code === Keys.DOM_VK_ESCAPE) {
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             if (this.model.isJustCreated) {
                 this.model.removeWithoutHistory();
                 Events.emit('refresh');
@@ -776,7 +776,7 @@ class DetailsView extends View {
             this.render();
         } else if (code === Keys.DOM_VK_TAB) {
             e.preventDefault();
-            $(e.target).unbind('blur');
+            $(e.target).off('blur');
             this.setTitle(e.target.value);
             if (!e.shiftKey) {
                 this.focusNextField({ field: '$Title' });

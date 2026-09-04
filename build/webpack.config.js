@@ -47,7 +47,10 @@ function config(options) {
                 path.join(rootDir, 'node_modules')
             ],
             alias: {
-                jquery: `jquery/dist/jquery${devMode ? '' : '.min'}.js`,
+                jquery: path.join(
+                    rootDir,
+                    `node_modules/jquery/dist/jquery${devMode ? '' : '.min'}.js`
+                ),
                 morphdom: `morphdom/dist/morphdom-umd${devMode ? '' : '.min'}.js`,
                 kdbxweb: `kdbxweb/dist/kdbxweb${devMode ? '' : '.min'}.js`,
                 baron: `baron/baron${devMode ? '' : '.min'}.js`,

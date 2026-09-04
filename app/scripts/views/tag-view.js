@@ -29,7 +29,7 @@ class TagView extends View {
     }
 
     renameTag() {
-        const title = $.trim(this.$el.find('#tag__field-title').val());
+        const title = (this.$el.find('#tag__field-title').val() || '').trim();
         if (!title || title === this.tag.title) {
             return;
         }
