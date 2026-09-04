@@ -20,7 +20,9 @@ module.exports = function (grunt) {
 
     const dt = date.toISOString().replace(/T.*/, '');
     const year = date.getFullYear();
-    const electronVersion = pkg.dependencies.electron.replace(/^\D/, '');
+    // electron числится в devDependencies: в рантайме он не нужен,
+    // это бинарь для сборки десктопа
+    const electronVersion = pkg.devDependencies.electron.replace(/^\D/, '');
     const skipSign = grunt.option('skip-sign');
     const getCodeSignConfig = () =>
         skipSign ? { identities: {} } : require('./keys/codesign.json');
