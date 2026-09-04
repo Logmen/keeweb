@@ -40,7 +40,20 @@ const Updater = {
 
     init() {
         this.scheduleNextCheck();
-        if (!Launcher && navigator.serviceWorker && !RuntimeInfo.beta && !RuntimeInfo.devMode) {
+        // В Android-обёртке на Capacitor ассеты лежат внутри APK — кэш service
+        // worker'а там не ускоряет ничего, зато переживает обновление APK и
+        // подсовывает старый index.html поверх нового.
+        const isCapacitor =
+            !!window.Capacitor &&
+            typeof window.Capacitor.isNativePlatform === 'function' &&
+            window.Capacitor.isNativePlatform();
+        if (
+            !Launcher &&
+            !isCapacitor &&
+            navigator.serviceWorker &&
+            !RuntimeInfo.beta &&
+            !RuntimeInfo.devMode
+        ) {
             navigator.serviceWorker
                 .register('service-worker.js')
                 .then((reg) => {

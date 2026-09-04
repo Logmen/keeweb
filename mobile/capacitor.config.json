@@ -1,0 +1,12 @@
+{
+  "appId": "net.antelle.keeweb",
+  "appName": "KeeWeb",
+  "webDir": "../dist",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#1e1e1e"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
