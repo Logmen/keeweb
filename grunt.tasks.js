@@ -18,24 +18,6 @@ module.exports = function (grunt) {
         'copy:dist-manifest'
     ]);
 
-    // Прежняя сборка на webpack — оставлена для сравнения вывода.
-    grunt.registerTask('build-web-app-webpack', [
-        'clean',
-        'eslint',
-        'copy:html',
-        'copy:icons',
-        'copy:manifest',
-        'webpack:app',
-        'inline',
-        'htmlmin',
-        'csp-hashes',
-        'copy:content-dist',
-        'string-replace:service-worker',
-        'string-replace:update-manifest',
-        'copy:dist-icons',
-        'copy:dist-manifest'
-    ]);
-
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-html',
         'copy:desktop-app-content',
@@ -155,5 +137,5 @@ module.exports = function (grunt) {
         'sign-dist'
     ]);
 
-    grunt.registerTask('build-test', ['webpack:test']);
+    grunt.registerTask('build-test', ['vite-test']);
 };

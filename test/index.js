@@ -1,14 +1,4 @@
-function requireAll(req) {
-    req.keys().forEach((mod) => {
-        try {
-            req(mod);
-        } catch (ex) {
-            // eslint-disable-next-line no-console
-            console.error('Error while running test', mod, ex.toString());
-            if ('testErrors' in global) {
-                global.testErrors++;
-            }
-        }
-    });
-}
-requireAll(require.context('test/src/', true, /\.js$/));
+// Ранее использовался require.context — расширение webpack. Vite-эквивалент:
+// import.meta.glob с eager, который вычисляет модули синхронно при импорте,
+// так что describe-блоки успевают зарегистрироваться до mocha.run().
+import.meta.glob('./src/**/*.js', { eager: true });

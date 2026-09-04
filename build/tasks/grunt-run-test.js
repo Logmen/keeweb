@@ -34,11 +34,14 @@ module.exports = function (grunt) {
                         console[out.method](...out.args);
                     }
                     if (result.done) {
-                        const { failures } = result.done;
+                        const { failures, total } = result.done;
                         if (failures) {
                             grunt.warn(`Failed ${failures} test${failures > 1 ? 's' : ''}.`);
+                        } else if (!total) {
+                            // ноль тестов — это не успех, а не загрузившийся бандл
+                            grunt.warn('No tests were run.');
                         } else {
-                            grunt.log.writeln('All tests passed');
+                            grunt.log.writeln(`All ${total} tests passed`);
                             done();
                         }
                         return;

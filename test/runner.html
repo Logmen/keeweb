@@ -28,9 +28,9 @@
         <script src="dist/test.bundle.js"></script>
         <script class="mocha-exec">
             mocha.reporter('spec');
-            mocha.run((failures) => {
+            const runner = mocha.run((failures) => {
                 failures += window.testErrors;
-                window.done = { failures };
+                window.done = { failures, total: runner.total };
             });
         </script>
     </body>

@@ -4,8 +4,6 @@ const fs = require('fs-extra');
 const { execSync } = require('child_process');
 const debug = require('debug');
 
-const webpackConfig = require('./build/webpack.config');
-const webpackConfigTest = require('./test/test.webpack.config');
 const pkg = require('./package.json');
 
 debug.enable('@electron/notarize');
@@ -43,7 +41,7 @@ module.exports = function (grunt) {
     }
     grunt.log.writeln(`Building KeeWeb v${pkg.version} (${sha})`);
 
-    const webpackOptions = {
+    const buildOptions = {
         date,
         beta: !!grunt.option('beta'),
         sha,
@@ -286,15 +284,20 @@ module.exports = function (grunt) {
         vite: {
             app: {
                 options: {
-                    ...webpackOptions,
+                    ...buildOptions,
                     mode: grunt.option('dev') ? 'development' : 'production'
                 }
+            }
+        },
+        'vite-test': {
+            app: {
+                options: { ...buildOptions }
             }
         },
         'vite-dev': {
             app: {
                 options: {
-                    ...webpackOptions,
+                    ...buildOptions,
                     port: 8085
                 }
             }
@@ -302,7 +305,7 @@ module.exports = function (grunt) {
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
-            build: ['Gruntfile.js', 'grunt.*.js', 'build/**/*.js', 'webpack.config.js'],
+            build: ['Gruntfile.js', 'grunt.*.js', 'build/**/*.js', 'test/*.config.js'],
             plugins: ['plugins/**/*.js'],
             util: ['util/**/*.js'],
             installer: ['package/osx/installer.js']
@@ -375,10 +378,6 @@ module.exports = function (grunt) {
                 },
                 files: { 'tmp/desktop/app/main.js': 'desktop/main.js' }
             }
-        },
-        webpack: {
-            app: webpackConfig.config(webpackOptions),
-            test: webpackConfigTest
         },
         electron: {
             options: {
