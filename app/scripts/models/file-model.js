@@ -23,10 +23,15 @@ class FileModel extends Model {
         });
     }
 
-    open(password, fileData, keyFileData, callback) {
+    open(password, fileData, keyFileData, callback, alternatePasswordTried) {
         try {
             const challengeResponse = ChalRespCalculator.build(this.chalResp);
-            const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
+            // kdbxweb для 32-байтового бинарного ключа оборачивает переданный буфер
+            // в ProtectedValue без копирования и XOR-ит его на месте — после первой
+            // попытки в keyFileData уже не ключ. Каждой попытке нужна своя копия.
+            const keyFileCopy =
+                keyFileData instanceof ArrayBuffer ? keyFileData.slice(0) : keyFileData;
+            const credentials = new kdbxweb.Credentials(password, keyFileCopy, challengeResponse);
             const ts = logger.ts();
 
             kdbxweb.Kdbx.load(fileData, credentials)
@@ -53,15 +58,22 @@ class FileModel extends Model {
                     callback();
                 })
                 .catch((err) => {
+                    // «пароля нет» (null) и «пустой пароль» ('') дают разные ключи.
+                    // KeePass и KeePassXC при пустом поле не добавляют пароль в ключ,
+                    // прежние версии KeeWeb сохраняли пустую строку. Пробуем второй
+                    // вариант ровно один раз.
+                    const passwordIsEmpty = !password || !password.byteLength;
                     if (
                         err.code === kdbxweb.Consts.ErrorCodes.InvalidKey &&
-                        password &&
-                        !password.byteLength
+                        passwordIsEmpty &&
+                        !alternatePasswordTried
                     ) {
+                        const alternate = password ? null : kdbxweb.ProtectedValue.fromString('');
                         logger.info(
-                            'Error opening file with empty password, try to open with null password'
+                            `Error opening file with ${password ? 'empty' : 'null'} password, ` +
+                                `try to open with ${password ? 'null' : 'empty'} password`
                         );
-                        return this.open(null, fileData, keyFileData, callback);
+                        return this.open(alternate, fileData, keyFileData, callback, true);
                     }
                     logger.error('Error opening file', err.code, err.message, err);
                     callback(err);
@@ -498,9 +510,14 @@ class FileModel extends Model {
     }
 
     setPassword(password) {
-        this.db.credentials.setPassword(password);
+        // с ключ-файлом пустой пароль — это «без пароля»: так пишут KeePass и
+        // KeePassXC, и пустую строку в этом случае они не примут
+        const passwordIsEmpty = !password || !password.byteLength;
+        const effectivePassword =
+            passwordIsEmpty && this.db.credentials.keyFileHash ? null : password;
+        this.db.credentials.setPassword(effectivePassword);
         this.db.meta.keyChanged = new Date();
-        this.set({ passwordLength: password.textLength, passwordChanged: true });
+        this.set({ passwordLength: password ? password.textLength : 0, passwordChanged: true });
         this.setModified();
     }
 
@@ -537,6 +554,10 @@ class FileModel extends Model {
 
     removeKeyFile() {
         this.db.credentials.setKeyFile(null);
+        // без ключ-файла и без пароля файл нечем открыть — возвращаем пустой пароль
+        if (!this.db.credentials.passwordHash) {
+            this.db.credentials.setPassword(kdbxweb.ProtectedValue.fromString(''));
+        }
         const changed = !!this.oldKeyFileHash;
         if (!changed && this.db.credentials.passwordHash === this.oldPasswordHash) {
             this.db.meta.keyChanged = this.oldKeyChangeDate;

@@ -1362,7 +1362,7 @@ class AppModel {
     }
 
     saveEncryptedPassword(file, params) {
-        if (!this.settings.deviceOwnerAuth || params.encryptedPassword) {
+        if (!this.settings.deviceOwnerAuth || params.encryptedPassword || !params.password) {
             return;
         }
         NativeModules.hardwareEncrypt(params.password)

@@ -677,7 +677,12 @@ class OpenView extends View {
         this.inputEl.attr('disabled', 'disabled');
         this.busy = true;
         this.params.password = this.passwordInput.value;
-        if (this.encryptedPassword && !this.params.password.length) {
+        // с ключ-файлом пустое поле означает «без пароля», а не пустую строку —
+        // это семантика KeePass; на пустую строку модель откатится сама
+        if (!this.passwordInput.length && (this.params.keyFileName || this.params.keyFileData)) {
+            this.params.password = null;
+        }
+        if (this.encryptedPassword && (!this.params.password || !this.params.password.length)) {
             logger.debug('Encrypting password using hardware decryption');
             const touchIdPrompt = Locale.bioOpenAuthPrompt.replace('{}', this.params.name);
             const encryptedPassword = kdbxweb.ProtectedValue.fromBase64(
