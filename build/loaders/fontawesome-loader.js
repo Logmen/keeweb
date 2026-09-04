@@ -68,7 +68,7 @@ function buildFont(loader, scssSource) {
     }
 
     const fontStream = new SVGIcons2SVGFontStream({
-        fontName: 'Font Awesome 5 Free',
+        fontName: 'Font Awesome 7 Free',
         round: 10e12,
         log() {}
     });
