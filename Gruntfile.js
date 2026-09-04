@@ -277,6 +277,14 @@ module.exports = function (grunt) {
                 nonull: true
             }
         },
+        vite: {
+            app: {
+                options: {
+                    mode: grunt.option('dev') ? 'development' : 'production',
+                    date
+                }
+            }
+        },
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],

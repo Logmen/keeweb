@@ -18,6 +18,25 @@ module.exports = function (grunt) {
         'copy:dist-manifest'
     ]);
 
+    // Сборка на Vite — переходный вариант рядом с webpack-версией,
+    // чтобы можно было сравнить вывод перед переключением.
+    grunt.registerTask('build-web-app-vite', [
+        'clean',
+        'eslint',
+        'copy:html',
+        'copy:icons',
+        'copy:manifest',
+        'vite:app',
+        'inline',
+        'htmlmin',
+        'csp-hashes',
+        'copy:content-dist',
+        'string-replace:service-worker',
+        'string-replace:update-manifest',
+        'copy:dist-icons',
+        'copy:dist-manifest'
+    ]);
+
     grunt.registerTask('build-desktop-app-content', [
         'copy:desktop-html',
         'copy:desktop-app-content',
