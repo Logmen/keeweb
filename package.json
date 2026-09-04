@@ -23,7 +23,7 @@
     "autoprefixer": "^10.2.5",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "8.2.2",
+    "babel-loader": "^10.1.1",
     "baron": "3.0.3",
     "base64-inline-loader": "^1.1.1",
     "base64-loader": "1.0.0",
@@ -100,7 +100,7 @@
     "tweetnacl": "^1.0.3",
     "url-loader": "^4.1.1",
     "wawoff2": "^2.0.0",
-    "webpack": "^5.36.2",
+    "webpack": "^5.110.3",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-dev-server": "^3.11.2"
   },
