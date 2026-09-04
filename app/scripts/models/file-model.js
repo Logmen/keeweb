@@ -29,8 +29,9 @@ class FileModel extends Model {
             // kdbxweb для 32-байтового бинарного ключа оборачивает переданный буфер
             // в ProtectedValue без копирования и XOR-ит его на месте — после первой
             // попытки в keyFileData уже не ключ. Каждой попытке нужна своя копия.
-            const keyFileCopy =
-                keyFileData instanceof ArrayBuffer ? keyFileData.slice(0) : keyFileData;
+            // В браузере ключ приходит ArrayBuffer'ом из FileReader, в Electron —
+            // Uint8Array'ем из Launcher.readFile: копируем любой view в точный буфер.
+            const keyFileCopy = FileModel.copyKeyFileData(keyFileData);
             const credentials = new kdbxweb.Credentials(password, keyFileCopy, challengeResponse);
             const ts = logger.ts();
 
@@ -82,6 +83,17 @@ class FileModel extends Model {
             logger.error('Error opening file', e, e.code, e.message, e);
             callback(e);
         }
+    }
+
+    static copyKeyFileData(keyFileData) {
+        if (keyFileData instanceof ArrayBuffer) {
+            return keyFileData.slice(0);
+        }
+        if (ArrayBuffer.isView(keyFileData)) {
+            const { buffer, byteOffset, byteLength } = keyFileData;
+            return buffer.slice(byteOffset, byteOffset + byteLength);
+        }
+        return keyFileData;
     }
 
     kdfArgsToString(header) {

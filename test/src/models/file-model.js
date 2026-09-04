@@ -51,6 +51,22 @@ describe('FileModel.open with a key file and no password', () => {
         expect(file.passwordLength).to.eql(0);
     });
 
+    it('opens when the key file comes as a Uint8Array, as on desktop', async () => {
+        // Launcher.readFile в Electron отдаёт Uint8Array, а не ArrayBuffer; первая
+        // попытка (null) для этого файла неверна и не должна портить ключ для второй
+        const key = new Uint8Array(hexToArrayBuffer(KEY_FILE_HEX));
+        const { err } = await new Promise((resolve) => {
+            const file = new FileModel({ id: 'key-u8-test' });
+            file.open(
+                kdbxweb.ProtectedValue.fromString(''),
+                base64ToArrayBuffer(keyOnlyDbBase64),
+                key,
+                (e) => resolve({ err: e, file })
+            );
+        });
+        expect(err).to.be.undefined;
+    });
+
     it('does not corrupt the key buffer passed by the caller', async () => {
         const key = hexToArrayBuffer(KEY_FILE_HEX);
         const before = Array.from(new Uint8Array(key));
