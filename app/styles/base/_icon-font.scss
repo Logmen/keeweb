@@ -24,14 +24,28 @@
 
 $fa-glyph-counter: 61440; // 0xf000
 
+// Раньше hex-код добывался из строкового представления rgb():
+// str-slice(#{rgb($hi, $lo, 1)}, 2, 5). Начиная с Dart Sass 1.7x цвета
+// печатаются как 'rgb(240, 1, 1)', а не '#f00101', и срез давал мусор
+// ('gb(2') во всех иконках. Считаем hex явно.
+@function to-hex($num) {
+    $hex-digits: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
+    $rest: $num;
+    $result: '';
+
+    @while $rest > 0 {
+        $digit: $rest % 16;
+        $result: nth($hex-digits, $digit + 1) + $result;
+        $rest: floor(($rest - $digit) / 16);
+    }
+
+    @return $result;
+}
+
 @function next-fa-glyph() {
     $fa-glyph-counter: $fa-glyph-counter + 1 !global;
 
-    $lo-part: $fa-glyph-counter % 256;
-    $hi-part: ($fa-glyph-counter - $lo-part) / 256;
-    $hex-num-str: str-slice(#{rgb($hi-part, $lo-part, 1)}, 2, 5);
-
-    $glyph: unquote('"\\#{$hex-num-str}"');
+    $glyph: unquote('"\\#{to-hex($fa-glyph-counter)}"');
 
     @return $glyph;
 }
