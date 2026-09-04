@@ -58,6 +58,7 @@ function config(options) {
                 'demo.kdbx': path.join(rootDir, 'app/resources/Demo.kdbx'),
                 // в вебе этих модулей нет — webpack отдавал 'null' через externals
                 xmldom: emptyModule,
+                '@xmldom/xmldom': emptyModule,
                 moment: emptyModule,
                 crypto: emptyModule,
                 fs: emptyModule,
