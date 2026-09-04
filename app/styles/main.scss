@@ -42,3 +42,6 @@ $fa-font-path: '~font-awesome/fonts';
 @import 'areas/settings';
 @import 'areas/import-csv';
 @import 'areas/titlebar';
+
+// мобильный слой — последним, чтобы перекрывать десктопные правила
+@import 'areas/mobile';

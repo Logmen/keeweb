@@ -5,6 +5,7 @@ import { AppRightsChecker } from 'comp/app/app-rights-checker';
 import { ExportApi } from 'comp/app/export-api';
 import { SingleInstanceChecker } from 'comp/app/single-instance-checker';
 import { Updater } from 'comp/app/updater';
+import { CapacitorIntegration } from 'comp/app/capacitor-integration';
 import { UsbListener } from 'comp/app/usb-listener';
 import { BrowserExtensionConnector } from 'comp/extension/browser-extension-connector';
 import { FeatureTester } from 'comp/browser/feature-tester';
@@ -179,6 +180,7 @@ ready(() => {
     }
 
     function postInit() {
+        CapacitorIntegration.init();
         setTimeout(() => {
             Updater.init();
             SingleInstanceChecker.init();

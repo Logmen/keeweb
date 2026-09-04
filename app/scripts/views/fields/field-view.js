@@ -21,7 +21,8 @@ class FieldView extends View {
         'dblclick .details__field-label': 'fieldLabelDblClick',
         'click .details__field-value': 'fieldValueClick',
         'dragstart .details__field-label': 'fieldLabelDrag',
-        'click .details__field-options': 'fieldOptionsClick'
+        'click .details__field-options': 'fieldOptionsClick',
+        'click .details__field-copy': 'fieldCopyClick'
     };
 
     constructor(model, options) {
@@ -47,7 +48,8 @@ class FieldView extends View {
             canEditTitle: this.model.newField,
             canGen: this.model.canGen,
             protect: this.value && this.value.isProtected,
-            hasOptions: !Features.isMobile && renderedValue && this.hasOptions
+            hasOptions: !Features.isMobile && renderedValue && this.hasOptions,
+            canCopy: Features.isMobile && !!renderedValue && !this.readonly
         });
         this.valueEl = this.$el.find('.details__field-value');
         this.valueEl.html(renderedValue);
@@ -123,6 +125,17 @@ class FieldView extends View {
             selection.removeAllRanges();
             this.emit('copy', { source: this, copyRes });
         }
+    }
+
+    // кнопка копирования в мобильной раскладке: копирует сразу, не раскрывая
+    // ряд действий; сам ряд остаётся по тапу на значение
+    fieldCopyClick(e) {
+        e.stopPropagation();
+        if (this.mobileActionsEl) {
+            this.mobileActionsEl.remove();
+            delete this.mobileActionsEl;
+        }
+        this.copyValue();
     }
 
     fieldValueClick(e) {
