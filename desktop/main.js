@@ -978,7 +978,7 @@ function migrateOldConfigs(key) {
 }
 
 function httpRequest(config, log, onLoad) {
-    // eslint-disable-next-line node/no-deprecated-api
+    // eslint-disable-next-line n/no-deprecated-api
     const opts = url.parse(config.url);
 
     opts.method = config.method || 'GET';

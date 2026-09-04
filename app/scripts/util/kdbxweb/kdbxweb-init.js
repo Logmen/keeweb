@@ -158,6 +158,9 @@ const KdbxwebInit = {
         });
     },
 
+    // Сокращённая запись метода здесь недопустима: функция уходит в воркер
+    // через .toString() и подставляется в литерал объекта, где
+    // 'postRun:' + 'name() {...}' дало бы невалидный синтаксис.
     // eslint-disable-next-line object-shorthand
     workerPostRun: function () {
         self.postMessage({ op: 'postRun' });
@@ -172,6 +175,9 @@ const KdbxwebInit = {
         };
     },
 
+    // Сокращённая запись метода здесь недопустима: функция уходит в воркер
+    // через .toString() и подставляется в литерал объекта, где
+    // 'calcHash:' + 'name() {...}' дало бы невалидный синтаксис.
     // eslint-disable-next-line object-shorthand
     calcHash: function (Module, args) {
         let { password, salt } = args;
