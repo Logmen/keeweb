@@ -14,5 +14,8 @@
     "url": "http://antelle.net"
   },
   "license": "MIT",
-  "readme": "../README.md"
+  "readme": "../README.md",
+  "dependencies": {
+    "@electron/remote": "^2.1.3"
+  }
 }
