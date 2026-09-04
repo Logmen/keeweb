@@ -6,6 +6,12 @@ import { AppSettingsModel } from 'models/app-settings-model';
 import { Logger } from 'util/logger';
 import { Launcher } from 'comp/launcher';
 
+// Замена webpack context module: eager даёт синхронную карту, как require()
+const localeModules = import.meta.glob('../../locales/*.json', {
+    eager: true,
+    import: 'default'
+});
+
 const logger = new Logger('settings-manager');
 
 const SettingsManager = {
@@ -156,7 +162,7 @@ const SettingsManager = {
             if (this.customLocales[loc]) {
                 localeValues = this.customLocales[loc];
             } else {
-                localeValues = require('../../locales/' + loc + '.json');
+                localeValues = localeModules[`../../locales/${loc}.json`];
             }
         }
         if (!this.neutralLocale) {

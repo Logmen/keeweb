@@ -5,10 +5,12 @@ import { Links } from 'const/links';
 import { DateFormat } from 'comp/i18n/date-format';
 import { StringFormat } from 'util/formatting/string-format';
 import { Locale } from 'util/locale';
+import dbTemplate from 'templates/export/db.hbs';
+import entryTemplate from 'templates/export/entry.hbs';
 
 const Templates = {
-    db: require('templates/export/db.hbs'),
-    entry: require('templates/export/entry.hbs')
+    db: dbTemplate,
+    entry: entryTemplate
 };
 
 const FieldMapping = [

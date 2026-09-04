@@ -5,6 +5,9 @@ import { Scrollable } from 'framework/views/scrollable';
 import { StringFormat } from 'util/formatting/string-format';
 import template from 'templates/settings/settings.hbs';
 
+// Замена webpack context module: eager даёт синхронную карту, как require()
+const settingsPageModules = import.meta.glob('./settings-*-view.js', { eager: true });
+
 class SettingsView extends View {
     parent = '.app__body';
 
@@ -36,7 +39,7 @@ class SettingsView extends View {
         if (page === 'file' && file && file.backend === 'otp-device') {
             page = 'file-otp-device';
         }
-        const module = require('./settings-' + page + '-view');
+        const module = settingsPageModules[`./settings-${page}-view.js`];
         const viewName = StringFormat.pascalCase(page);
         const SettingsPageView = module[`Settings${viewName}View`];
         if (this.views.page) {

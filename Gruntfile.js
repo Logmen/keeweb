@@ -280,8 +280,8 @@ module.exports = function (grunt) {
         vite: {
             app: {
                 options: {
-                    mode: grunt.option('dev') ? 'development' : 'production',
-                    date
+                    ...webpackOptions,
+                    mode: grunt.option('dev') ? 'development' : 'production'
                 }
             }
         },

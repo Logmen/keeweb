@@ -9,11 +9,15 @@ const logger = new Logger('launcher');
 
 const Launcher = {
     name: 'electron',
-    version: window.process.versions.electron,
+    get version() {
+        return window.process.versions.electron;
+    },
     autoTypeSupported: true,
     thirdPartyStoragesSupported: true,
     clipboardSupported: true,
-    req: window.require,
+    get req() {
+        return window.require;
+    },
     platform() {
         return process.platform;
     },
@@ -294,40 +298,45 @@ const Launcher = {
     }
 };
 
-Events.on('launcher-exit-request', () => {
-    setTimeout(() => Launcher.exit(), 0);
-});
-Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
-Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized'), 0));
-Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
-Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
-Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
+// Вызовы Electron API вынесены из верхнего уровня модуля: при сборке
+// Vite/Rollup импорты вычисляются жадно, и в вебе такой модуль падал бы.
+// Инициализацию запускает comp/launcher/index.js только под Electron.
+function initLauncher() {
+    Events.on('launcher-exit-request', () => {
+        setTimeout(() => Launcher.exit(), 0);
+    });
+    Events.on('launcher-minimize', () => setTimeout(() => Events.emit('app-minimized'), 0));
+    Events.on('launcher-maximize', () => setTimeout(() => Events.emit('app-maximized'), 0));
+    Events.on('launcher-unmaximize', () => setTimeout(() => Events.emit('app-unmaximized'), 0));
+    Events.on('launcher-started-minimized', () => setTimeout(() => Launcher.minimizeApp(), 0));
+    Events.on('start-profile', (data) => StartProfiler.reportAppProfile(data));
 
-window.launcherOpen = (file) => Launcher.openFile(file);
-if (window.launcherOpenedFile) {
-    logger.info('Open file request', window.launcherOpenedFile);
-    Launcher.openFile(window.launcherOpenedFile);
-    delete window.launcherOpenedFile;
-}
-Events.on('app-ready', () =>
-    setTimeout(() => {
-        Launcher.checkOpenFiles();
-        Launcher.remoteApp().setAboutPanelOptions({
-            applicationVersion: RuntimeInfo.version,
-            version: RuntimeInfo.commit
-        });
-    }, 0)
-);
-
-if (process.platform === 'darwin') {
-    Launcher.remoteApp().setHookBeforeQuitEvent(true);
-}
-
-Launcher.remoteApp().on('remote-app-event', (e) => {
-    if (window.debugRemoteAppEvents) {
-        logger.debug('remote-app-event', e.name);
+    window.launcherOpen = (file) => Launcher.openFile(file);
+    if (window.launcherOpenedFile) {
+        logger.info('Open file request', window.launcherOpenedFile);
+        Launcher.openFile(window.launcherOpenedFile);
+        delete window.launcherOpenedFile;
     }
-    Events.emit(e.name, e.data);
-});
+    Events.on('app-ready', () =>
+        setTimeout(() => {
+            Launcher.checkOpenFiles();
+            Launcher.remoteApp().setAboutPanelOptions({
+                applicationVersion: RuntimeInfo.version,
+                version: RuntimeInfo.commit
+            });
+        }, 0)
+    );
 
-export { Launcher };
+    if (process.platform === 'darwin') {
+        Launcher.remoteApp().setHookBeforeQuitEvent(true);
+    }
+
+    Launcher.remoteApp().on('remote-app-event', (e) => {
+        if (window.debugRemoteAppEvents) {
+            logger.debug('remote-app-event', e.name);
+        }
+        Events.emit(e.name, e.data);
+    });
+}
+
+export { Launcher, initLauncher };

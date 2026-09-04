@@ -14,6 +14,10 @@ import { ListSearchView } from 'views/list-search-view';
 import throttle from 'lodash/throttle';
 import template from 'templates/list.hbs';
 import emptyTemplate from 'templates/list-empty.hbs';
+import listModeTableTemplate from 'templates/list-mode-table.hbs';
+import listModeListTemplate from 'templates/list-mode-list.hbs';
+import listItemTableTemplate from 'templates/list-item-table.hbs';
+import listItemShortTemplate from 'templates/list-item-short.hbs';
 
 class ListView extends View {
     parent = '.app__list';
@@ -138,17 +142,17 @@ class ListView extends View {
 
     getItemsTemplate() {
         if (this.model.settings.tableView) {
-            return require('templates/list-mode-table.hbs');
+            return listModeTableTemplate;
         } else {
-            return require('templates/list-mode-list.hbs');
+            return listModeListTemplate;
         }
     }
 
     getItemTemplate() {
         if (this.model.settings.tableView) {
-            return require('templates/list-item-table.hbs');
+            return listItemTableTemplate;
         } else {
-            return require('templates/list-item-short.hbs');
+            return listItemShortTemplate;
         }
     }
 

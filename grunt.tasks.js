@@ -7,7 +7,7 @@ module.exports = function (grunt) {
         'copy:html',
         'copy:icons',
         'copy:manifest',
-        'webpack:app',
+        'vite:app',
         'inline',
         'htmlmin',
         'csp-hashes',
@@ -18,15 +18,14 @@ module.exports = function (grunt) {
         'copy:dist-manifest'
     ]);
 
-    // Сборка на Vite — переходный вариант рядом с webpack-версией,
-    // чтобы можно было сравнить вывод перед переключением.
-    grunt.registerTask('build-web-app-vite', [
+    // Прежняя сборка на webpack — оставлена для сравнения вывода.
+    grunt.registerTask('build-web-app-webpack', [
         'clean',
         'eslint',
         'copy:html',
         'copy:icons',
         'copy:manifest',
-        'vite:app',
+        'webpack:app',
         'inline',
         'htmlmin',
         'csp-hashes',

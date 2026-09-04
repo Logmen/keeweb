@@ -7,6 +7,8 @@ const handlebarsPlugin = require('./vite-plugins/handlebars');
 const rawFilesPlugin = require('./vite-plugins/raw-files');
 const fontawesomePlugin = require('./vite-plugins/fontawesome');
 const appModulesPlugin = require('./vite-plugins/app-modules');
+const runtimeInfoPlugin = require('./vite-plugins/runtime-info');
+const baronPlugin = require('./vite-plugins/baron');
 
 const rootDir = path.join(__dirname, '..');
 const pkg = require('../package.json');
@@ -62,6 +64,11 @@ function config(options) {
                 path: emptyModule
             }
         },
+        // webpack полифиллил global в браузере, Vite — нет; в коде есть
+        // обращения вида global.WebAssembly
+        define: {
+            global: 'globalThis'
+        },
         css: {
             preprocessorOptions: {
                 scss: {
@@ -96,7 +103,16 @@ function config(options) {
         plugins: [
             appModulesPlugin(rootDir),
             rawFilesPlugin(),
-            handlebarsPlugin(),
+            handlebarsPlugin(rootDir),
+            baronPlugin(),
+            runtimeInfoPlugin({
+                VERSION: pkg.version + (options.beta ? '-beta' : ''),
+                BETA: options.beta ? '1' : '',
+                DATE: options.date.toISOString().replace(/T.*/, ''),
+                COMMIT: options.sha,
+                DEVMODE: devMode ? '1' : '',
+                APPLE_TEAM_ID: options.appleTeamId
+            }),
             fontawesomePlugin(),
             inject({ $: path.join(rootDir, `node_modules/jquery/dist/jquery${min}.js`) })
         ],
