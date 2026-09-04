@@ -1,7 +1,6 @@
 /* eslint-env node */
 
 const fs = require('fs-extra');
-const path = require('path');
 const { execSync } = require('child_process');
 const debug = require('debug');
 
@@ -102,6 +101,13 @@ module.exports = function (grunt) {
                 cwd: 'app/content/',
                 src: '**',
                 dest: 'dist/',
+                expand: true,
+                nonull: true
+            },
+            'content-dev': {
+                cwd: 'app/content/',
+                src: '**',
+                dest: 'tmp/',
                 expand: true,
                 nonull: true
             },
@@ -285,6 +291,14 @@ module.exports = function (grunt) {
                 }
             }
         },
+        'vite-dev': {
+            app: {
+                options: {
+                    ...webpackOptions,
+                    port: 8085
+                }
+            }
+        },
         eslint: {
             app: ['app/scripts/**/*.js'],
             desktop: ['desktop/**/*.js', '!desktop/node_modules/**'],
@@ -365,25 +379,6 @@ module.exports = function (grunt) {
         webpack: {
             app: webpackConfig.config(webpackOptions),
             test: webpackConfigTest
-        },
-        'webpack-dev-server': {
-            options: {
-                webpack: webpackConfig.config({
-                    ...webpackOptions,
-                    mode: 'development',
-                    sha: 'dev'
-                }),
-                publicPath: '/',
-                contentBase: [
-                    path.resolve(__dirname, 'tmp'),
-                    path.resolve(__dirname, 'app/content')
-                ],
-                progress: false
-            },
-            js: {
-                keepalive: true,
-                port: 8085
-            }
         },
         electron: {
             options: {

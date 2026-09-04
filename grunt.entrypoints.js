@@ -11,7 +11,8 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('devsrv', 'Start web server and watcher', [
-        'webpack-dev-server'
+        'copy:content-dev',
+        'vite-dev'
     ]);
 
     grunt.registerTask('desktop', 'Build web and desktop apps for all platforms', [
