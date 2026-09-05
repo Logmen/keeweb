@@ -6,7 +6,9 @@
   "scripts": {
     "sync": "cap sync android",
     "open": "cap open android",
-    "build": "cd android && ./gradlew assembleDebug"
+    "build": "cd android && ./gradlew assembleDebug",
+    "capacitor:copy:after": "node scripts/sw-kill-switch.js",
+    "capacitor:sync:after": "node scripts/sw-kill-switch.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.6.9",

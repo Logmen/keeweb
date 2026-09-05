@@ -20,6 +20,33 @@ function capacitor() {
     return cap;
 }
 
+// Первые Android-сборки регистрировали обычный service worker KeeWeb, который
+// кэширует index.html и переживает обновление APK. Снимаем любую оставшуюся
+// регистрацию и чистим кэш; если текущая страница пришла из такого кэша —
+// перезагружаем, чтобы показать код из установленного APK. Страховка к
+// worker-«ликвидатору», который кладёт в ассеты mobile/scripts/sw-kill-switch.js.
+async function cleanupServiceWorker() {
+    if (!navigator.serviceWorker) {
+        return;
+    }
+    try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+        if (window.caches) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((key) => caches.delete(key)));
+        }
+        if (registrations.length) {
+            logger.info('Unregistered stale service workers:', registrations.length);
+            if (navigator.serviceWorker.controller) {
+                location.reload();
+            }
+        }
+    } catch (e) {
+        logger.error('Service worker cleanup failed', e);
+    }
+}
+
 function appPlugin(cap) {
     return (cap.Plugins && cap.Plugins.App) || null;
 }
@@ -92,6 +119,7 @@ const CapacitorIntegration = {
         if (!cap) {
             return;
         }
+        cleanupServiceWorker();
         const app = appPlugin(cap);
         if (!app) {
             logger.warn('App plugin is not available');
