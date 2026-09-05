@@ -220,7 +220,7 @@ class OpenView extends View {
                 this.setFile(file, null, this.showLocalFileAlert.bind(this));
             } else {
                 this.processFile(file, (success) => {
-                    if (success && !file.path && this.reading === 'fileData') {
+                    if (success && !this.getFilePath(file) && this.reading === 'fileData') {
                         this.showLocalFileAlert();
                     }
                 });
@@ -228,10 +228,17 @@ class OpenView extends View {
         }
     }
 
+    // В браузере у File пути нет; в Electron его отдаёт лаунчер (webUtils),
+    // потому что File.path там больше не существует.
+    getFilePath(file) {
+        return Launcher ? Launcher.getFilePath(file) : null;
+    }
+
     processFile(file, complete) {
         const reader = new FileReader();
         reader.onload = (e) => {
             let success = false;
+            const filePath = this.getFilePath(file);
             switch (this.reading) {
                 case 'fileData': {
                     const format = this.getOpenFileFormat(e.target.result);
@@ -240,8 +247,8 @@ class OpenView extends View {
                             this.params.id = null;
                             this.params.fileData = e.target.result;
                             this.params.name = file.name.replace(/(.+)\.\w+$/i, '$1');
-                            this.params.path = file.path || null;
-                            this.params.storage = file.path ? 'file' : null;
+                            this.params.path = filePath;
+                            this.params.storage = filePath ? 'file' : null;
                             this.params.rev = null;
                             if (!this.params.keyFileData) {
                                 this.params.keyFileName = null;
@@ -283,7 +290,7 @@ class OpenView extends View {
                     this.params.keyFileData = e.target.result;
                     this.params.keyFileName = file.name;
                     if (this.model.settings.rememberKeyFiles === 'path') {
-                        this.params.keyFilePath = file.path;
+                        this.params.keyFilePath = filePath;
                     }
                     this.displayOpenKeyFile();
                     success = true;

@@ -36,6 +36,16 @@ const Launcher = {
     remReq(mod) {
         return this.remote().require(mod);
     },
+    // Нестандартное File.path убрано в Electron 32: путь к выбранному в диалоге
+    // или перетащенному файлу теперь отдаёт только webUtils.getPathForFile.
+    getFilePath(file) {
+        try {
+            return this.electron().webUtils.getPathForFile(file) || null;
+        } catch (e) {
+            logger.error('Error getting file path', e);
+            return null;
+        }
+    },
     openLink(href) {
         if (/^(http|https|ftp|sftp|mailto):/i.test(href)) {
             this.electron().shell.openExternal(href);
