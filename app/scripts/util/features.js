@@ -12,6 +12,12 @@ const Features = {
     isMobile: MobileRegex.test(navigator.userAgent) || screen.width < MinDesktopScreenWidth,
     isPopup: !!(window.parent !== window.top || window.opener),
     isStandalone: !!navigator.standalone,
+    // Android-оболочка на Capacitor: WebView без окон-попапов, внешние ссылки
+    // уходят в системный браузер и обратно в приложение не возвращаются
+    get isCapacitor() {
+        const cap = window.Capacitor;
+        return !!cap && typeof cap.isNativePlatform === 'function' && cap.isNativePlatform();
+    },
     isFrame: window.top !== window,
     isSelfHosted:
         !isDesktop &&

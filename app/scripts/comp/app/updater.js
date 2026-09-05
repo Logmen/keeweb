@@ -3,6 +3,7 @@ import { Events } from 'framework/events';
 import { RuntimeInfo } from 'const/runtime-info';
 import { Transport } from 'comp/browser/transport';
 import { Launcher } from 'comp/launcher';
+import { Features } from 'util/features';
 import { Links } from 'const/links';
 import { AppSettingsModel } from 'models/app-settings-model';
 import { UpdateModel } from 'models/update-model';
@@ -43,13 +44,9 @@ const Updater = {
         // В Android-обёртке на Capacitor ассеты лежат внутри APK — кэш service
         // worker'а там не ускоряет ничего, зато переживает обновление APK и
         // подсовывает старый index.html поверх нового.
-        const isCapacitor =
-            !!window.Capacitor &&
-            typeof window.Capacitor.isNativePlatform === 'function' &&
-            window.Capacitor.isNativePlatform();
         if (
             !Launcher &&
-            !isCapacitor &&
+            !Features.isCapacitor &&
             navigator.serviceWorker &&
             !RuntimeInfo.beta &&
             !RuntimeInfo.devMode
